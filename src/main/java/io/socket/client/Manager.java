@@ -1,5 +1,7 @@
 package io.socket.client;
 
+import com.yy.httpproxy.service.DnsHandler;
+
 import io.socket.backo.Backoff;
 import io.socket.emitter.Emitter;
 import io.socket.parser.Packet;
@@ -9,6 +11,8 @@ import io.socket.thread.EventThread;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -254,7 +258,10 @@ public class Manager extends Emitter {
                 if (Manager.this.readyState == ReadyState.OPEN || Manager.this.readyState == ReadyState.OPENING) return;
 
                 logger.fine(String.format("opening %s", Manager.this.uri));
-                Manager.this.engine = new Engine(Manager.this.uri, Manager.this.opts);
+
+                URI source = uriFromDns();
+                System.out.println("Dns connect host " + source);
+                Manager.this.engine = new Engine(source, Manager.this.opts);
                 final io.socket.engineio.client.Socket socket = Manager.this.engine;
                 final Manager self = Manager.this;
                 Manager.this.readyState = ReadyState.OPENING;
@@ -331,6 +338,23 @@ public class Manager extends Emitter {
             }
         });
         return this;
+    }
+
+    private URI uriFromDns() {
+        if(Manager.this.opts.dnsHandler != null) {
+            String httpDnsHost = this.opts.dnsHandler.handlerDns(Url.parse(this.uri).toString());
+            URI source;
+            try {
+                URI uri = new URI(httpDnsHost);
+                URL parsed = Url.parse(uri);
+                source = parsed.toURI();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                source = this.uri;
+            }
+            return source;
+        }
+        return this.uri;
     }
 
     private void onopen() {
@@ -614,7 +638,7 @@ public class Manager extends Emitter {
         public long reconnectionDelay;
         public long reconnectionDelayMax;
         public double randomizationFactor;
-
+        public DnsHandler dnsHandler;
         /**
          * Connection timeout (ms). Set -1 to disable.
          */
