@@ -260,7 +260,6 @@ public class Manager extends Emitter {
                 logger.fine(String.format("opening %s", Manager.this.uri));
 
                 URI source = uriFromDns();
-                System.out.println("Dns connect host " + source);
                 Manager.this.engine = new Engine(source, Manager.this.opts);
                 final io.socket.engineio.client.Socket socket = Manager.this.engine;
                 final Manager self = Manager.this;
@@ -342,10 +341,12 @@ public class Manager extends Emitter {
 
     private URI uriFromDns() {
         if(Manager.this.opts.dnsHandler != null) {
-            String httpDnsHost = this.opts.dnsHandler.handlerDns(Url.parse(this.uri).toString());
+            URL url = Url.parse(this.uri);
+            String httpDnsHost = this.opts.dnsHandler.handlerDns(url.getHost());
+            String socketHost = url.getProtocol() + "://" + httpDnsHost + ":" + url.getPort();
             URI source;
             try {
-                URI uri = new URI(httpDnsHost);
+                URI uri = new URI(socketHost);
                 URL parsed = Url.parse(uri);
                 source = parsed.toURI();
             } catch (URISyntaxException e) {
