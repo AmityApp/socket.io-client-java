@@ -1,6 +1,6 @@
 package io.socket.client;
 
-import com.yy.httpproxy.service.DnsHandler;
+import io.socket.global.DnsHandler;
 
 import io.socket.backo.Backoff;
 import io.socket.emitter.Emitter;
