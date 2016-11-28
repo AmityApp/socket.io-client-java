@@ -3,6 +3,7 @@ package io.socket.client;
 import io.socket.emitter.Emitter;
 import io.socket.hasbinary.HasBinary;
 import io.socket.parser.Packet;
+import io.socket.global.Global;
 import io.socket.parser.Parser;
 import io.socket.thread.EventThread;
 import org.json.JSONArray;
@@ -241,7 +242,7 @@ public class Socket extends Emitter {
                         addAll(Arrays.asList(args));
                     }
                 }};
-                
+
                 JSONArray jsonArgs = new JSONArray();
                 for (Object _arg : _args) {
                     jsonArgs.put(_arg);
@@ -327,7 +328,7 @@ public class Socket extends Emitter {
 
     private void onevent(Packet<JSONArray> packet) {
         List<Object> args = new ArrayList<Object>(Arrays.asList(toArray(packet.data)));
-        logger.fine(String.format("emitting event %s", args));
+         logger.fine(String.format("emitting event %s", Global.isAndroid ? "<omitted>" : args));
 
         if (packet.id >= 0) {
             logger.fine("attaching ack callback to event");
@@ -375,7 +376,7 @@ public class Socket extends Emitter {
     private void onack(Packet<JSONArray> packet) {
         Ack fn = this.acks.remove(packet.id);
         if (fn != null) {
-            logger.fine(String.format("calling ack %s with %s", packet.id, packet.data));
+            logger.fine(String.format("calling ack %s with %s", packet.id, Global.isAndroid ? "<omitted>" : packet.data));
             fn.call(toArray(packet.data));
         } else {
             logger.fine(String.format("bad ack %s", packet.id));
@@ -489,4 +490,3 @@ public class Socket extends Emitter {
         return data;
     }
 }
-

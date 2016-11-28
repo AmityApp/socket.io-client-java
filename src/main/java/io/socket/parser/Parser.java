@@ -2,7 +2,7 @@ package io.socket.parser;
 
 import org.json.JSONException;
 import org.json.JSONTokener;
-
+import io.socket.global.Global;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,7 +118,7 @@ public class Parser {
                 str.append(obj.data);
             }
 
-            logger.fine(String.format("encoded %s as %s", obj, str));
+            logger.fine(String.format("encoded %s as %s", obj, Global.isAndroid ? "<omitted>" : str));
             return str.toString();
         }
 
@@ -269,5 +269,3 @@ public class Parser {
         }
     }
 }
-
-
