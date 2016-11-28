@@ -1,3 +1,21 @@
+
+0.8.2 / 2016-10-22
+==================
+
+* bump `engine.io-client`
+
+0.8.1 / 2016-09-27
+==================
+
+* bump `engine.io-client`
+
+0.8.0 / 2016-09-23
+==================
+
+* bump `engine.io-client`
+* README: fix typos [kylestev, lu-zero]
+* test: use TLSv1
+
 0.7.0 / 2016-02-01
 ==================
 
